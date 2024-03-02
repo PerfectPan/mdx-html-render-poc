@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Home</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <!--
+      Need a visual blank slate?
+      Remove all code in `styles.css`!
+    -->
+    <link rel="stylesheet" href="styles.css" />
+    <script type="module" src="script.js"></script>
+  </head>
+  <body>
+    <main>
+      <h1>HTML 方案</h1>
+      <div id="markdown"></div>
+      <button id="button">重新模拟 Streaming</button>
+    </main>
+    <script>
+      class AilyButton extends HTMLElement {
+        constructor() {
+          super(); // 调用父类的constructor
+          // 初始化shadow root
+          const shadow = this.attachShadow({ mode: 'open' });
+
+          // 创建button元素
+          const button = document.createElement('button');
+          button.innerText = this.getAttribute('text') || 'Aily Button'; // 设置按钮文本
+
+          // 创建样式
+          const style = document.createElement('style');
+          style.textContent = `
+            button {
+              background-color: #007bff;
+              border: none;
+              color: white;
+              padding: 15px 32px;
+              text-align: center;
+              text-decoration: none;
+              display: inline-block;
+              font-size: 16px;
+              margin: 4px 2px;
+              cursor: pointer;
+              border-radius: 8px;
+              transition: background-color 0.3s;
+            }
+            
+            button:hover {
+              background-color: #0056b3;
+            }
+        `;
+
+          // 将元素和样式附加到shadow root
+          shadow.appendChild(style);
+          shadow.appendChild(button);
+        }
+      }
+
+      customElements.define('aily-button', AilyButton);
+    </script>
+    <script>
+      function streaming() {
+        const eventSource = new EventSource('http://localhost:3000/events');
+        eventSource.onmessage = function (event) {
+          const eventObj = JSON.parse(event.data);
+          document.getElementById('markdown').innerHTML = eventObj.content;
+        };
+      }
+      streaming();
+      document.getElementById('button').addEventListener('click', streaming);
+    </script>
+  </body>
+</html>
